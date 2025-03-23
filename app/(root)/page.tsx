@@ -1,9 +1,12 @@
+import { UserButton } from '@clerk/nextjs';
 import React from 'react'
 
-function Home() {
+const SetupPage = () => {
   return (
-    <div>Hello Admin Dashboard</div>
+    <div className='p-4'>
+      <UserButton afterSwitchSessionUrl='/'/>
+    </div>
   )
 }
 
-export default Home;
+export default SetupPage;
