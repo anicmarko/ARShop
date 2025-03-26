@@ -15,11 +15,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
-import { BillboardColumn } from "./columns";
+import { CategoryColumn } from "./columns";
 import { AlertModal } from "@/components/modals/alert-modal";
 
 interface CellActionProps {
-    data: BillboardColumn;
+    data: CategoryColumn;
 };
 
 export const CellAction: React.FC<CellActionProps> = ({
@@ -32,21 +32,21 @@ export const CellAction: React.FC<CellActionProps> = ({
 
     const onCopy = (id: string) => {
         navigator.clipboard.writeText(id);
-        toast.success("Billboard ID copied to clipboard");    
+        toast.success("Category ID copied to clipboard");    
     }
 
-    const onUpdate = (bilboardId: string) => {
-        router.push(`/${params.storeId}/billboards/${bilboardId}`);
+    const onUpdate = (categoryId: string) => {
+        router.push(`/${params.storeId}/categories/${categoryId}`);
     }
 
     const onDelete = async () => {
         try {
             setLoading(true);
-            await axios.delete(`/api/${params.storeId}/billboards/${data.id}`);
+            await axios.delete(`/api/${params.storeId}/categories/${data.id}`);
             router.refresh();
-            toast.success("Billboard deleted");
+            toast.success("Category deleted");
         } catch (error) {
-            toast.error("Remove all categories first.");
+            toast.error("Remove all products first.");
         } finally {
             setLoading(false);
             setOpen(false);
