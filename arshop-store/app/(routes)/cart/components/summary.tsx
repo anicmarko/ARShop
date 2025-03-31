@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import axios from "axios";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-hot-toast";
 
 import Button from "@/components/ui/button";
@@ -10,7 +10,7 @@ import Currency from "@/components/ui/currency";
 import useCart from "@/hooks/useCart";
 
 const Summary = () => {
-    const searchParams = useSearchParams();
+    const searchParams =  useSearchParams();
 
     const items = useCart((state) => state.items);
     const clearCart = useCart((state) => state.clearCart);
@@ -25,7 +25,6 @@ const Summary = () => {
             toast.success("Checkout completed!");
             clearCart();
         }
-
         if(searchParams.has("canceled")) {
             toast.error("Something went wrong!");
         }

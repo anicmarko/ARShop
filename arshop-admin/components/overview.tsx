@@ -3,6 +3,7 @@
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 
 
+
 interface OverviewProps {
     data: any[];
 };
@@ -12,7 +13,7 @@ const Overview: React.FC<OverviewProps> = ({
 }) => {
   return (
     <ResponsiveContainer width="100%" height={350}>
-        <BarChart>
+        <BarChart data={data} >
             <XAxis
                 dataKey="name"
                 stroke="#888888"
@@ -29,7 +30,7 @@ const Overview: React.FC<OverviewProps> = ({
             />
             <Bar
                 dataKey="total"
-                fill="#3498db"
+                fill="#C44DFF"
                 radius={[4, 4, 0, 0]}
             />
         </BarChart>
