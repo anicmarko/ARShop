@@ -41,11 +41,11 @@ export async function POST(
         line_items.push({
             quantity: 1,
             price_data: {
-                currency: "usd",
+                currency: "USD",
                 product_data: {
                     name: product.name,
                 },
-                unit_amount: Number(product.price),
+                unit_amount: Number(product.price) * 100,
             },
         });
     });
