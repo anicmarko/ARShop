@@ -11,9 +11,9 @@ import Overview from '@/components/overview'
 import { getGraphRevenue } from '@/actions/get-graph-revenue'
 
 interface DashboardPageProps {
-    params: {
+    params: Promise<{
         storeId: string
-    }
+    }>
 }
 
 const DashboardPage: React.FC<DashboardPageProps> = async ({
