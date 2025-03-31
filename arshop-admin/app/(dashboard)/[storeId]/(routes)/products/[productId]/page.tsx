@@ -5,7 +5,7 @@ import { ProductForm } from './components/product-form';
 const ProductPage = async ({
     params
 }: {
-    params: { productId: string, storeId: string } 
+    params: Promise<{ productId: string, storeId: string }> 
 }) => {
     const { productId, storeId} = await params;
     

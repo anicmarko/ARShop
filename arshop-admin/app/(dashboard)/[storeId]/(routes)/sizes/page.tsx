@@ -7,9 +7,9 @@ import { SizeColumn } from './components/columns'
 const SizesPage = async ({
     params
 }: {
-    params: {
+    params: Promise<{
         storeId: string
-    }
+    }>
 }) => {
     const { storeId } = await params;
 

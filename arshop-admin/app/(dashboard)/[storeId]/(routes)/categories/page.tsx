@@ -7,9 +7,9 @@ import { CategoryColumn } from './components/columns'
 const CategoriesPage = async ({
     params
 }: {
-    params: {
+    params: Promise<{
         storeId: string
-    }
+    }>
 }) => {
     const { storeId } = await params;
 

@@ -7,9 +7,9 @@ import { BillboardColumn } from './components/columns'
 const BillboardsPage = async ({
     params
 }: {
-    params: {
+    params: Promise<{
         storeId: string
-    }
+    }>
 }) => {
     const { storeId } = await params;
 

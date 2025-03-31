@@ -7,9 +7,9 @@ import { ColorColumn } from './components/columns'
 const ColorsPage = async ({
     params
 }: {
-    params: {
+    params: Promise<{
         storeId: string
-    }
+    }>
 }) => {
     const { storeId } = await params;
 
