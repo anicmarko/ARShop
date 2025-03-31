@@ -55,6 +55,7 @@ const Summary = () => {
             <Button 
                 className="w-full mt-6"
                 onClick={onCheckout}
+                disabled={items.length === 0}
             >
                 Checkout
             </Button>
