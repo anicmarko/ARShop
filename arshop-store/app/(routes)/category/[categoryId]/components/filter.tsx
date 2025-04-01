@@ -6,7 +6,6 @@ import qs from "query-string";
 import { Color, Size } from "@/types";
 import Button from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Suspense } from "react";
 
 interface FilterProps {
     valueKey: string;
@@ -43,7 +42,6 @@ const Filter: React.FC<FilterProps> = ({
         router.push(url);
     }
     return (
-        <Suspense fallback={<div className="h-4 w-4 animate-pulse bg-gray-200 rounded-full"></div>}>
 
         <div className="mb-8">
             <h3 className="text-lg font-semibold">
@@ -67,7 +65,6 @@ const Filter: React.FC<FilterProps> = ({
                 ))}
             </div>
         </div>
-        </Suspense>
     )
 }
 

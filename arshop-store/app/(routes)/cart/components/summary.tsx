@@ -1,8 +1,8 @@
 "use client";
 
-import { Suspense, useEffect } from "react";
+import { useEffect } from "react";
 import axios from "axios";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { toast } from "react-hot-toast";
 
 import Button from "@/components/ui/button";
@@ -39,7 +39,6 @@ const Summary = () => {
     }
 
     return (
-        <Suspense fallback={<div className="h-4 w-4 animate-pulse bg-gray-200 rounded-full"></div>}>
         <div 
             className="mt-16 rounded-lg bg-gray-50 px-4 py-6 sm:p-6 lg:col-span-5 lg:mt-0 lg:p-8">
             <h2 className="text-lg font-medium text-gray-900">
@@ -61,7 +60,6 @@ const Summary = () => {
                 Checkout
             </Button>
         </div>
-        </Suspense>
     )
 }
 

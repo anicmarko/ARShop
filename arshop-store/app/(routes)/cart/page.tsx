@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
 import Container from "@/components/ui/container";
 import useCart from "@/hooks/useCart";
@@ -35,7 +35,9 @@ const CartPage = () => {
                                 ))}
                             </ul>
                         </div>
-                        <Summary />
+                        <Suspense fallback={<div className="h-4 w-4 animate-pulse bg-gray-200 rounded-full"></div>}>
+                            <Summary />
+                        </Suspense>
                     </div>
                 </div>
             </Container>
