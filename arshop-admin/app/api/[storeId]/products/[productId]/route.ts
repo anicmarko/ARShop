@@ -11,7 +11,7 @@ export async function GET (
         const { productId } = await params;
 
         if(!productId){
-            return new NextResponse("Product ID is required", { status: 400 });
+            return NextResponse.json({ error: "Product ID is required", status: 400});
         }
 
 
@@ -31,7 +31,7 @@ export async function GET (
         
     } catch (error) {
         console.error("[PRODUCT_GET]",error);
-        return new NextResponse("Internal error", { status: 500 });
+        return NextResponse.json({ error: "Internal error", status: 500});
     }
 }
 
@@ -43,7 +43,7 @@ export async function PATCH (
         const { userId } = await auth();
 
         if(!userId) {
-            return new NextResponse("Unauthenticated", { status: 401 });
+            return NextResponse.json({ error: "Unauthenticated", status: 401});
         }
          
         const body = await req.json();
@@ -60,33 +60,33 @@ export async function PATCH (
          } = body;
 
         if(!name) {
-            return new NextResponse("Name is required", { status: 400 });
+            return NextResponse.json({ error: "Name is required", status: 400});
         }
 
         if(!images || !images.length) {
-            return new NextResponse("Images are required", { status: 400 });
+            return NextResponse.json({ error: "Images are required", status: 400});
         }
 
         if(!price) {
-            return new NextResponse("Price is required", { status: 400 });
+            return NextResponse.json({ error: "Price is required", status: 400});
         }
 
         if(!categoryId) {
-            return new NextResponse("Category ID is required", { status: 400 });
+            return NextResponse.json({ error: "Category ID is required", status: 400});
         }
 
         if(!sizeId) {
-            return new NextResponse("Size ID is required", { status: 400 });
+            return NextResponse.json({ error: "Size ID is required", status: 400});
         }
 
         if(!colorId) {
-            return new NextResponse("Color ID is required", { status: 400 });
+            return NextResponse.json({ error: "Color ID is required", status: 400});
         }
 
         const { storeId, productId } = await params;
 
         if(!productId){
-            return new NextResponse("Product ID is required", { status: 400 });
+            return NextResponse.json({ error: "Product ID is required", status: 400});
         }
 
         const storeByUserId = await prismadb.store.findFirst({
@@ -97,7 +97,7 @@ export async function PATCH (
         });
 
         if(!storeByUserId) {
-            return new NextResponse("Unauthorized", { status: 403 });
+            return NextResponse.json({ error: "Unauthorized", status: 403});
         }
 
         await prismadb.product.update({
@@ -136,7 +136,7 @@ export async function PATCH (
         
     } catch (error) {
         console.error("[PRODUCT_PATCH]",error);
-        return new NextResponse("Internal error", { status: 500 });
+        return NextResponse.json({ error: "Internal error", status: 500});
     }
 }
 
@@ -148,13 +148,13 @@ export async function DELETE (
         const { userId } = await auth();
 
         if(!userId) {
-            return new NextResponse("Unauthenticated", { status: 401 });
+            return NextResponse.json({ error: "Unauthenticated", status: 401});
         }
 
         const { storeId, productId } = await params;
 
         if(!productId){
-            return new NextResponse("Product ID is required", { status: 400 });
+            return NextResponse.json({ error: "Product ID is required", status: 400});
         }
 
         const storeByUserId = await prismadb.store.findFirst({
@@ -165,7 +165,7 @@ export async function DELETE (
         });
 
         if(!storeByUserId) {
-            return new NextResponse("Unauthorized", { status: 403 });
+            return NextResponse.json({ error: "Unauthorized", status: 403});
         }
 
 
@@ -179,7 +179,7 @@ export async function DELETE (
         
     } catch (error) {
         console.error("[PRODUCT_DELETE]",error);
-        return new NextResponse("Internal error", { status: 500 });
+        return NextResponse.json({ error: "Internal error", status: 500});
     }
 }
 

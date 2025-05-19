@@ -11,7 +11,7 @@ export async function GET (
         const { colorId } = await params;
 
         if(!colorId){
-            return new NextResponse("Color ID is required", { status: 400 });
+            return NextResponse.json({ error: "Color ID is required", status: 400});
         }
 
 
@@ -25,7 +25,7 @@ export async function GET (
         
     } catch (error) {
         console.error("[COLOR_GET]",error);
-        return new NextResponse("Internal error", { status: 500 });
+        return NextResponse.json({ error: "Internal error", status: 500});
     }
 }
 
@@ -37,23 +37,23 @@ export async function PATCH (
         const { userId } = await auth();
 
         if(!userId) {
-            return new NextResponse("Unauthenticated", { status: 401 });
+            return NextResponse.json({ error: "Unauthenticated", status: 401});
         }
          
         const body = await req.json();
         const { name, value } = body;
 
         if(!name) {
-            return new NextResponse("Name is required", { status: 400 });
+            return NextResponse.json({ error: "Name is required", status: 400});
         }
         if(!value) {
-            return new NextResponse("Value is required", { status: 400 });
+            return NextResponse.json({ error: "Value is required", status: 400});
         }
 
         const { storeId, colorId } = await params;
 
         if(!colorId){
-            return new NextResponse("Color ID is required", { status: 400 });
+            return NextResponse.json({ error: "Color ID is required", status: 400});
         }
 
         const storeByUserId = await prismadb.store.findFirst({
@@ -64,7 +64,7 @@ export async function PATCH (
         });
 
         if(!storeByUserId) {
-            return new NextResponse("Unauthorized", { status: 403 });
+            return NextResponse.json({ error: "Unauthorized", status: 403});
         }
 
         const color = await prismadb.color.update({
@@ -81,7 +81,7 @@ export async function PATCH (
         
     } catch (error) {
         console.error("[COLOR_PATCH]",error);
-        return new NextResponse("Internal error", { status: 500 });
+        return NextResponse.json({ error: "Internal error", status: 500});
     }
 }
 
@@ -93,13 +93,13 @@ export async function DELETE (
         const { userId } = await auth();
 
         if(!userId) {
-            return new NextResponse("Unauthenticated", { status: 401 });
+            return NextResponse.json({ error: "Unauthenticated", status: 401});
         }
 
         const { storeId, colorId } = await params;
 
         if(!colorId){
-            return new NextResponse("Color ID is required", { status: 400 });
+            return NextResponse.json({ error: "Color ID is required", status: 400});
         }
 
         const storeByUserId = await prismadb.store.findFirst({
@@ -110,7 +110,7 @@ export async function DELETE (
         });
 
         if(!storeByUserId) {
-            return new NextResponse("Unauthorized", { status: 403 });
+            return NextResponse.json({ error: "Unauthorized", status: 403});
         }
 
 
@@ -125,7 +125,7 @@ export async function DELETE (
         
     } catch (error) {
         console.error("[COLOR_DELETE]",error);
-        return new NextResponse("Internal error", { status: 500 });
+        return NextResponse.json({ error: "Internal error", status: 500});
     }
 }
 

@@ -19,7 +19,7 @@ export async function POST(req: Request) {
             process.env.STRIPE_WEBHOOK_SECRET!
         );
     } catch (err: any) {      
-        return new NextResponse('Webhook Error: ' + err.message, { status: 400 });
+        return NextResponse.json({error: err.message, status: 400 });
     }
 
     const session = event.data.object as Stripe.Checkout.Session;
@@ -61,6 +61,7 @@ export async function POST(req: Request) {
                 isArchived: true,
             },
         });
+        return NextResponse.json({ success: true }, { status: 200 });
     }
-    return new NextResponse(null, { status: 200 });
+    return NextResponse.json({ error: "Unhandled event type" }, { status: 400 });
 }

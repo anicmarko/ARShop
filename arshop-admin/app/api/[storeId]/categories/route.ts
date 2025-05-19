@@ -14,21 +14,21 @@ export async function POST(
         const { name, billboardId } = body;
 
         if(!userId) {
-            return new NextResponse("Unauthorized", { status: 401 });
+            return NextResponse.json({ error: "Unauthorized", status: 401});
         }
 
         if(!name) {
-            return new NextResponse("Name is required", { status: 400 });
+            return NextResponse.json({ error: "Name is required", status: 400});
         }
 
         if(!billboardId) {
-            return new NextResponse("Billboard ID is required", { status: 400 });
+            return NextResponse.json({ error: "Billboard ID is required", status: 400});
         }
 
         const { storeId }= await params;
 
         if(!storeId) {
-            return new NextResponse("Store ID is required", { status: 400 });
+            return NextResponse.json({ error: "Store ID is required", status: 400});
         }
 
         const storeByUserId = await prismadb.store.findFirst({
@@ -39,7 +39,7 @@ export async function POST(
         });
 
         if(!storeByUserId) {
-            return new NextResponse("Unauthorized", { status: 403 });
+            return NextResponse.json({ error: "Unauthorized", status: 403});
         }
 
         const category  = await prismadb.category.create({
@@ -54,7 +54,7 @@ export async function POST(
 
     } catch (error) {
         console.error('[CATEGORIES_POST]', error);
-        return new NextResponse("Internal error", { status: 500 });
+        return NextResponse.json({ error: "Internal error", status: 500});
     }
 }
 export async function GET(
@@ -66,7 +66,7 @@ export async function GET(
         const { storeId }= await params;
 
         if(!storeId) {
-            return new NextResponse("Store ID is required", { status: 400 });
+            return NextResponse.json({ error: "Store ID is required", status: 400});
         }
 
         const categories  = await prismadb.category.findMany({
@@ -79,6 +79,6 @@ export async function GET(
 
     } catch (error) {
         console.error('[CATEGORIES_GET]', error);
-        return new NextResponse("Internal error", { status: 500 });
+        return NextResponse.json({ error: "Internal error", status: 500});
     }
 }

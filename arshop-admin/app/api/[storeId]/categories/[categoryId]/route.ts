@@ -11,7 +11,7 @@ export async function GET (
         const { categoryId } = await params;
 
         if(!categoryId){
-            return new NextResponse("Category ID is required", { status: 400 });
+            return NextResponse.json({ error: "Category ID is required", status: 400});
         }
 
 
@@ -28,7 +28,7 @@ export async function GET (
         
     } catch (error) {
         console.error("[CATEGORY_GET]",error);
-        return new NextResponse("Internal error", { status: 500 });
+        return NextResponse.json({ error: "Internal error", status: 500});
     }
 }
 
@@ -40,23 +40,23 @@ export async function PATCH (
         const { userId } = await auth();
 
         if(!userId) {
-            return new NextResponse("Unauthenticated", { status: 401 });
+            return NextResponse.json({ error: "Unauthenticated", status: 401});
         }
          
         const body = await req.json();
         const { name, billboardId } = body;
 
         if(!name) {
-            return new NextResponse("Name is required", { status: 400 });
+            return NextResponse.json({ error: "Name is required", status: 400});
         }
         if(!billboardId) {
-            return new NextResponse("Billboard ID is required", { status: 400 });
+            return NextResponse.json({ error: "Billboard ID is required", status: 400});
         }
 
         const { storeId, categoryId } = await params;
 
         if(!categoryId){
-            return new NextResponse("Category ID is required", { status: 400 });
+            return NextResponse.json({ error: "Category ID is required", status: 400});
         }
 
         const storeByUserId = await prismadb.store.findFirst({
@@ -67,7 +67,7 @@ export async function PATCH (
         });
 
         if(!storeByUserId) {
-            return new NextResponse("Unauthorized", { status: 403 });
+            return NextResponse.json({ error: "Unauthorized", status: 403});
         }
 
         const category = await prismadb.category.update({
@@ -84,7 +84,7 @@ export async function PATCH (
         
     } catch (error) {
         console.error("[CATEGORY_PATCH]",error);
-        return new NextResponse("Internal error", { status: 500 });
+        return NextResponse.json({ error: "Internal error", status: 500});
     }
 }
 
@@ -96,13 +96,13 @@ export async function DELETE (
         const { userId } = await auth();
 
         if(!userId) {
-            return new NextResponse("Unauthenticated", { status: 401 });
+            return NextResponse.json({ error: "Unauthenticated", status: 401});
         }
 
         const { storeId, categoryId } = await params;
 
         if(!categoryId){
-            return new NextResponse("Category ID is required", { status: 400 });
+            return NextResponse.json({ error: "Category ID is required", status: 400});
         }
 
         const storeByUserId = await prismadb.store.findFirst({
@@ -113,7 +113,7 @@ export async function DELETE (
         });
 
         if(!storeByUserId) {
-            return new NextResponse("Unauthorized", { status: 403 });
+            return NextResponse.json({ error: "Unauthorized", status: 403});
         }
 
 
@@ -127,7 +127,7 @@ export async function DELETE (
         
     } catch (error) {
         console.error("[CATEGORY_DELETE]",error);
-        return new NextResponse("Internal error", { status: 500 });
+        return NextResponse.json({ error: "Internal error", status: 500});
     }
 }
 

@@ -14,21 +14,21 @@ export async function POST(
         const { label, imageUrl } = body;
 
         if(!userId) {
-            return new NextResponse("Unauthorized", { status: 401 });
+            return NextResponse.json({ error: "Unauthorized", status: 401});
         }
 
         if(!label) {
-            return new NextResponse("Label is required", { status: 400 });
+            return NextResponse.json({ error: "Label is required", status: 400});
         }
 
         if(!imageUrl) {
-            return new NextResponse("Image URL is required", { status: 400 });
+            return NextResponse.json({ error: "Image URL is required", status: 400});
         }
 
         const { storeId }= await params;
 
         if(!storeId) {
-            return new NextResponse("Store ID is required", { status: 400 });
+            return NextResponse.json({ error: "Store ID is required", status: 400});
         }
 
         const storeByUserId = await prismadb.store.findFirst({
@@ -39,7 +39,7 @@ export async function POST(
         });
 
         if(!storeByUserId) {
-            return new NextResponse("Unauthorized", { status: 403 });
+            return NextResponse.json({ error: "Unauthorized", status: 403});
         }
 
         const billboard  = await prismadb.billboard.create({
@@ -54,7 +54,7 @@ export async function POST(
 
     } catch (error) {
         console.error('[BILLBOARDS_POST]', error);
-        return new NextResponse("Internal error", { status: 500 });
+        return NextResponse.json({ error: "Internal error", status: 500});
     }
 }
 export async function GET(
@@ -67,7 +67,7 @@ export async function GET(
         const { storeId }= await params;
 
         if(!storeId) {
-            return new NextResponse("Store ID is required", { status: 400 });
+            return NextResponse.json({ error: "Store ID is required", status: 400});
         }
 
         const billboards  = await prismadb.billboard.findMany({
@@ -80,6 +80,6 @@ export async function GET(
 
     } catch (error) {
         console.error('[BILLBOARDS_GET]', error);
-        return new NextResponse("Internal error", { status: 500 });
+        return NextResponse.json({ error: "Internal error", status: 500});
     }
 }

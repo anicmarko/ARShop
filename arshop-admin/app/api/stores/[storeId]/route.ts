@@ -10,20 +10,20 @@ export async function PATCH (
         const { userId } = await auth();
 
         if(!userId) {
-            return new NextResponse("Unauthenticated", { status: 401 });
+            return NextResponse.json({ error: "Unauthenticated", status: 401});
         }
          
         const body = await req.json();
         const { name } = body;
 
         if(!name) {
-            return new NextResponse("Name is required", { status: 400 });
+            return NextResponse.json({ error: "Name is required", status: 400});
         }
 
         const { storeId } = await params;
 
         if(!storeId){
-            return new NextResponse("Store ID is required", { status: 400 });
+            return NextResponse.json({ error: "Store ID is required", status: 400});
         }
 
         const store = await prismadb.store.updateMany({
@@ -40,7 +40,7 @@ export async function PATCH (
         
     } catch (error) {
         console.error("[STORE_PATCH]",error);
-        return new NextResponse("Internal error", { status: 500 });
+        return NextResponse.json({ error: "Internal error", status: 500});
     }
 }
 
@@ -52,13 +52,13 @@ export async function DELETE (
         const { userId } = await auth();
 
         if(!userId) {
-            return new NextResponse("Unauthenticated", { status: 401 });
+            return NextResponse.json({ error: "Unauthenticated", status: 401});
         }
 
         const { storeId } = await params;
 
         if(!storeId){
-            return new NextResponse("Store ID is required", { status: 400 });
+            return NextResponse.json({ error: "Store ID is required", status: 400});
         }
 
         const store = await prismadb.store.deleteMany({
@@ -72,6 +72,6 @@ export async function DELETE (
         
     } catch (error) {
         console.error("[STORE_DELETE]",error);
-        return new NextResponse("Internal error", { status: 500 });
+        return NextResponse.json({ error: "Internal error", status: 500});
     }
 }

@@ -14,21 +14,21 @@ export async function POST(
         const { name, value } = body;
 
         if(!userId) {
-            return new NextResponse("Unauthorized", { status: 401 });
+            return NextResponse.json({ error: "Unauthorized", status: 401});
         }
 
         if(!name) {
-            return new NextResponse("Name is required", { status: 400 });
+            return NextResponse.json({ error: "Name is required", status: 400});
         }
 
         if(!value) {
-            return new NextResponse("Value is required", { status: 400 });
+            return NextResponse.json({ error: "Value is required", status: 400});
         }
 
         const { storeId }= await params;
 
         if(!storeId) {
-            return new NextResponse("Store ID is required", { status: 400 });
+            return NextResponse.json({ error: "Store ID is required", status: 400});
         }
 
         const storeByUserId = await prismadb.store.findFirst({
@@ -39,7 +39,7 @@ export async function POST(
         });
 
         if(!storeByUserId) {
-            return new NextResponse("Unauthorized", { status: 403 });
+            return NextResponse.json({ error: "Unauthorized", status: 403});
         }
 
         const size  = await prismadb.size.create({
@@ -54,7 +54,7 @@ export async function POST(
 
     } catch (error) {
         console.error('[SIZES_POST]', error);
-        return new NextResponse("Internal error", { status: 500 });
+        return NextResponse.json({ error: "Internal error", status: 500});
     }
 }
 export async function GET(
@@ -67,7 +67,7 @@ export async function GET(
         const { storeId }= await params;
 
         if(!storeId) {
-            return new NextResponse("Store ID is required", { status: 400 });
+            return NextResponse.json({ error: "Store ID is required", status: 400});
         }
 
         const sizes  = await prismadb.size.findMany({
@@ -80,6 +80,6 @@ export async function GET(
 
     } catch (error) {
         console.error('[SIZES_GET]', error);
-        return new NextResponse("Internal error", { status: 500 });
+        return NextResponse.json({ error: "Internal error", status: 500});
     }
 }

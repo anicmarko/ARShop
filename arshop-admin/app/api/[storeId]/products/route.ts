@@ -22,37 +22,37 @@ export async function POST(
          } = body;
 
         if(!userId) {
-            return new NextResponse("Unauthorized", { status: 401 });
+            return NextResponse.json({ error: "Unauthorized", status: 401});
         }
 
         if(!name) {
-            return new NextResponse("Name is required", { status: 400 });
+            return NextResponse.json({ error: "Name is required", status: 400});
         }
 
         if(!images || !images.length) {
-            return new NextResponse("Images are required", { status: 400 });
+            return NextResponse.json({ error: "Images are required", status: 400});
         }
 
         if(!price) {
-            return new NextResponse("Price is required", { status: 400 });
+            return NextResponse.json({ error: "Price is required", status: 400});
         }
 
         if(!categoryId) {
-            return new NextResponse("Category ID is required", { status: 400 });
+            return NextResponse.json({ error: "Category ID is required", status: 400});
         }
 
         if(!sizeId) {
-            return new NextResponse("Size ID is required", { status: 400 });
+            return NextResponse.json({ error: "Size ID is required", status: 400});
         }
 
         if(!colorId) {
-            return new NextResponse("Color ID is required", { status: 400 });
+            return NextResponse.json({ error: "Color ID is required", status: 400});
         }
 
         const { storeId }= await params;
 
         if(!storeId) {
-            return new NextResponse("Store ID is required", { status: 400 });
+            return NextResponse.json({ error: "Store ID is required", status: 400});
         }
 
         const storeByUserId = await prismadb.store.findFirst({
@@ -63,7 +63,7 @@ export async function POST(
         });
 
         if(!storeByUserId) {
-            return new NextResponse("Unauthorized", { status: 403 });
+            return NextResponse.json({ error: "Unauthorized", status: 403});
         }
         const product  = await prismadb.product.create({
             data: {
@@ -89,7 +89,7 @@ export async function POST(
 
     } catch (error) {
         console.error('[PRODUCTS_POST]', error);
-        return new NextResponse("Internal error", { status: 500 });
+        return NextResponse.json({ error: "Internal error", status: 500});
     }
 }
 export async function GET(
@@ -108,7 +108,7 @@ export async function GET(
         const { storeId }= await params;
 
         if(!storeId) {
-            return new NextResponse("Store ID is required", { status: 400 });
+            return NextResponse.json({ error: "Store ID is required", status: 400});
         }
 
         const products  = await prismadb.product.findMany({
@@ -135,6 +135,6 @@ export async function GET(
 
     } catch (error) {
         console.error('[PRODUCTS_GET]', error);
-        return new NextResponse("Internal error", { status: 500 });
+        return NextResponse.json({ error: "Internal error", status: 500});
     }
 }
