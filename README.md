@@ -7,7 +7,6 @@ ARShop is a modern full-stack e-commerce platform built with Next.js 15, TypeScr
 - **Storefront**
   - Product listing, filtering, and search
   - Responsive design with Tailwind CSS
-  - Shopping cart with persistent state (Zustand + localStorage)
   - Secure Stripe checkout and order confirmation
   - Toast notifications for user feedback
 
@@ -22,7 +21,6 @@ ARShop is a modern full-stack e-commerce platform built with Next.js 15, TypeScr
   - Next.js 15 
   - TypeScript
   - Prisma ORM & MySQL
-  - Zustand for state management
   - Stripe for payments
   - Clerk for authentication
   - Tailwind CSS
