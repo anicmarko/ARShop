@@ -11,7 +11,7 @@ const Billboard: React.FC<BillboardProps> = ({
     return (
         <div className="p-4 sm:p-6 lg:p-8 rounded-xl overflow-hidden">
             <div 
-                style={{ backgroundImage:`url(${data?.imageUrl})` }} 
+                style={{ backgroundImage: data?.imageUrl ? `url(${data.imageUrl})` : undefined }}
                 className="bg-cover rounded-xl relative aspect-square md:aspect-[2.4/1] overflow-hidden"
             >
                 <div className="h-full w-full flex flex-col justify-center items-center text-center gap-y-8">
