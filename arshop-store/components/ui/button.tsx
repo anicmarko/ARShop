@@ -1,9 +1,7 @@
 import { cn } from "@/lib/utils";
 import React, { forwardRef } from "react";
 
-export interface ButtonProps extends React.HTMLProps<HTMLButtonElement> {
-    
-}
+export interface ButtonProps extends React.HTMLProps<HTMLButtonElement> {}
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
     className,
@@ -13,10 +11,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
     ...props
 }, ref) => {
     return (
-        <button 
-            ref={ref} 
+        <button
+            ref={ref}
             className={cn(
-                "w-auto rounded-3xl bg-black border-transparent px-5 py-3 disabled:cursor-not-allowed disabled:opacity-50 text-white font-semibold hover:opacity-75 transition",
+                "w-auto rounded-full bg-gray-900 dark:bg-zinc-100 border-transparent px-5 py-3 disabled:cursor-not-allowed disabled:opacity-50 text-white dark:text-zinc-900 font-semibold hover:opacity-80 transition text-sm",
                 className
             )}
             disabled={disabled}
