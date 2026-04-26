@@ -40,7 +40,7 @@ export async function POST(req: Request, props: { params: Promise<{ storeId: str
         line_items.push({
             quantity: 1,
             price_data: {
-                currency: "USD",
+                currency: "rsd",
                 product_data: {
                     name: product.name,
                 },
