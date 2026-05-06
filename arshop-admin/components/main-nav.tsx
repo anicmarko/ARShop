@@ -4,10 +4,15 @@ import { cn } from "@/lib/utils"
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 
+interface MainNavProps extends React.HTMLAttributes<HTMLElement> {
+    isOwner?: boolean;
+}
+
 export function MainNav({
     className,
+    isOwner = true,
     ...props
-}: React.HTMLAttributes<HTMLElement>) {
+}: MainNavProps) {
     const pathname = usePathname();
     const params = useParams();
 
@@ -48,10 +53,15 @@ export function MainNav({
             active: pathname === `/${params.storeId}/orders`
         },
         {
+            href: `/${params.storeId}/admins`,
+            label: 'Admins',
+            active: pathname === `/${params.storeId}/admins`
+        },
+        ...(isOwner ? [{
             href: `/${params.storeId}/settings`,
             label: 'Settings',
             active: pathname === `/${params.storeId}/settings`
-        }
+        }] : [])
     ];
 
     return (

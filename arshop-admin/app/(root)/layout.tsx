@@ -3,27 +3,41 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 export default async function SetupLayout({
-    children 
-}: { 
-    children: React.ReactNode 
+    children
+}: {
+    children: React.ReactNode
 }) {
     const { userId } = await auth();
 
-    if(!userId) {
+    if (!userId) {
         redirect("/sign-in");
     }
 
-    const store = await prismadb.store.findFirst({
+    // Redirect OWNER to their store
+    const ownedStore = await prismadb.store.findFirst({
         where: { userId }
     });
 
-    if( store ){
-        redirect(`/${store.id}`);
+    if (ownedStore) {
+        redirect(`/${ownedStore.id}`);
     }
 
-    return (
-        <>
-            {children}
-        </>
-    );
+    // Redirect MANAGER to their assigned store
+    const adminRecord = await prismadb.admin.findFirst({
+        where: { clerkId: userId },
+        include: { store: true },
+    });
+
+    if (adminRecord?.store) {
+        redirect(`/${adminRecord.store.id}`);
+    }
+
+    // If any store exists in the system, this user has no access — show unauthorized
+    const anyStore = await prismadb.store.findFirst();
+    if (anyStore) {
+        redirect("/unauthorized");
+    }
+
+    // No stores exist at all — allow initial store creation
+    return <>{children}</>;
 }
