@@ -12,12 +12,12 @@ import { SizeColumn, columns } from "./columns";
 
 interface SizeClientProps {
     data: SizeColumn[];
+    total: number;
+    page: number;
+    pageSize: number;
 }
 
-export const SizeClient: React.FC<SizeClientProps> = ({
-    data
-}) => {
-
+export const SizeClient: React.FC<SizeClientProps> = ({ data, total, page, pageSize }) => {
     const router = useRouter();
     const params = useParams();
 
@@ -25,19 +25,27 @@ export const SizeClient: React.FC<SizeClientProps> = ({
         <>
             <div className="flex items-center justify-between">
                 <Heading
-                    title={`Sizes (${data.length})`}
+                    title={`Sizes (${total})`}
                     description="Manage your sizes here"
                 />
                 <Button onClick={() => router.push(`/${params.storeId}/sizes/new`)}>
-                    <Plus className="mr-2 h-4 w-4"/>
+                    <Plus className="mr-2 h-4 w-4" />
                     Add new
                 </Button>
             </div>
             <Separator />
-            <DataTable filterBy="name" columns={columns} data={data}/>
-            <Heading title="API" description="API calls for Sizes"/>
+            <DataTable
+                filterBy="name"
+                columns={columns}
+                data={data}
+                total={total}
+                page={page}
+                pageSize={pageSize}
+                sortableColumns={["name", "createdAt"]}
+            />
+            <Heading title="API" description="API calls for Sizes" />
             <Separator />
-            <ApiList entityName="sizes" entityIdName="sizeId"/>
+            <ApiList entityName="sizes" entityIdName="sizeId" />
         </>
-    )
-}
+    );
+};

@@ -8,20 +8,28 @@ import { OrderColumn, columns } from "./columns";
 
 interface OrderClientProps {
     data: OrderColumn[];
+    total: number;
+    page: number;
+    pageSize: number;
 }
 
-export const OrderClient: React.FC<OrderClientProps> = ({
-    data
-}) => {
-
+export const OrderClient: React.FC<OrderClientProps> = ({ data, total, page, pageSize }) => {
     return (
         <>
             <Heading
-                title={`Orders (${data.length})`}
+                title={`Orders (${total})`}
                 description="Manage your orders here"
             />
             <Separator />
-            <DataTable filterBy="products" columns={columns} data={data}/>
+            <DataTable
+                filterBy="products"
+                columns={columns}
+                data={data}
+                total={total}
+                page={page}
+                pageSize={pageSize}
+                sortableColumns={["createdAt", "isPaid"]}
+            />
         </>
-    )
-}
+    );
+};
