@@ -13,7 +13,9 @@ interface CartItemProps {
 
 const CartItemRow: React.FC<CartItemProps> = ({ data }) => {
     const cart = useCart();
-    const { product, quantity } = data;
+    const { product, sizeId, sizeName, quantity } = data;
+
+    const sizeStock = product.sizes.find((s) => s.sizeId === sizeId)?.stock ?? 0;
 
     return (
         <li className="flex py-6 border-b border-gray-200 dark:border-zinc-800">
@@ -49,15 +51,15 @@ const CartItemRow: React.FC<CartItemProps> = ({ data }) => {
                                     {product.color.name}
                                 </span>
                             )}
-                            {product.size?.name && (
+                            {sizeName && (
                                 <span className="border-l border-gray-200 dark:border-zinc-700 pl-3">
-                                    {product.size.name}
+                                    {sizeName}
                                 </span>
                             )}
                         </div>
                     </div>
                     <button
-                        onClick={() => cart.removeItem(product.id)}
+                        onClick={() => cart.removeItem(product.id, sizeId)}
                         aria-label={`Remove ${product.name} from cart`}
                         className="p-1.5 rounded-full text-gray-400 dark:text-zinc-500 hover:text-gray-700 dark:hover:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors shrink-0"
                     >
@@ -67,10 +69,9 @@ const CartItemRow: React.FC<CartItemProps> = ({ data }) => {
 
                 {/* Bottom row: qty stepper + line price */}
                 <div className="mt-4 flex items-center justify-between gap-4">
-                    {/* Quantity stepper */}
                     <div className="flex items-center gap-1 rounded-full border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-900 p-0.5">
                         <button
-                            onClick={() => cart.updateQuantity(product.id, quantity - 1)}
+                            onClick={() => cart.updateQuantity(product.id, sizeId, quantity - 1)}
                             aria-label="Decrease quantity"
                             className="w-7 h-7 flex items-center justify-center rounded-full text-gray-600 dark:text-zinc-400 hover:bg-gray-200 dark:hover:bg-zinc-700 transition-colors disabled:opacity-40"
                             disabled={quantity <= 1}
@@ -84,15 +85,15 @@ const CartItemRow: React.FC<CartItemProps> = ({ data }) => {
                             {quantity}
                         </span>
                         <button
-                            onClick={() => cart.updateQuantity(product.id, quantity + 1)}
+                            onClick={() => cart.updateQuantity(product.id, sizeId, quantity + 1)}
                             aria-label="Increase quantity"
-                            className="w-7 h-7 flex items-center justify-center rounded-full text-gray-600 dark:text-zinc-400 hover:bg-gray-200 dark:hover:bg-zinc-700 transition-colors"
+                            disabled={quantity >= sizeStock}
+                            className="w-7 h-7 flex items-center justify-center rounded-full text-gray-600 dark:text-zinc-400 hover:bg-gray-200 dark:hover:bg-zinc-700 transition-colors disabled:opacity-40"
                         >
                             <Plus size={13} />
                         </button>
                     </div>
 
-                    {/* Line total */}
                     <div className="text-right">
                         <Currency value={Number(product.price) * quantity} />
                         {quantity > 1 && (

@@ -7,9 +7,9 @@ import useCartDrawer from "@/hooks/use-cart-drawer";
 
 interface CartStore {
     items: CartItem[];
-    addItem: (product: Product) => void;
-    removeItem: (productId: string) => void;
-    updateQuantity: (productId: string, quantity: number) => void;
+    addItem: (product: Product, sizeId: string, sizeName: string) => void;
+    removeItem: (productId: string, sizeId: string) => void;
+    updateQuantity: (productId: string, sizeId: string, quantity: number) => void;
     clearCart: () => void;
     totalItems: () => number;
 }
@@ -19,36 +19,57 @@ const useCart = create(
         (set, get) => ({
             items: [],
 
-            addItem: (product: Product) => {
+            addItem: (product: Product, sizeId: string, sizeName: string) => {
                 useCartDrawer.getState().onOpen();
-                const existing = get().items.find((i) => i.product.id === product.id);
+                const sizeStock = product.sizes.find((s) => s.sizeId === sizeId)?.stock ?? 0;
+                const existing = get().items.find(
+                    (i) => i.product.id === product.id && i.sizeId === sizeId
+                );
                 if (existing) {
+                    if (existing.quantity >= sizeStock) {
+                        toast.error(`Only ${sizeStock} in stock for size ${sizeName}`);
+                        return;
+                    }
                     set({
                         items: get().items.map((i) =>
-                            i.product.id === product.id
+                            i.product.id === product.id && i.sizeId === sizeId
                                 ? { ...i, quantity: i.quantity + 1 }
                                 : i
                         ),
                     });
                     toast.success("Quantity updated");
                 } else {
-                    set({ items: [...get().items, { product, quantity: 1 }] });
+                    if (sizeStock === 0) {
+                        toast.error(`Size ${sizeName} is out of stock`);
+                        return;
+                    }
+                    set({ items: [...get().items, { product, sizeId, sizeName, quantity: 1 }] });
                     toast.success("Added to cart");
                 }
             },
 
-            removeItem: (productId: string) => {
-                set({ items: get().items.filter((i) => i.product.id !== productId) });
+            removeItem: (productId: string, sizeId: string) => {
+                set({
+                    items: get().items.filter(
+                        (i) => !(i.product.id === productId && i.sizeId === sizeId)
+                    ),
+                });
                 toast.success("Removed from cart");
             },
 
-            updateQuantity: (productId: string, quantity: number) => {
+            updateQuantity: (productId: string, sizeId: string, quantity: number) => {
                 if (quantity <= 0) {
-                    set({ items: get().items.filter((i) => i.product.id !== productId) });
+                    set({
+                        items: get().items.filter(
+                            (i) => !(i.product.id === productId && i.sizeId === sizeId)
+                        ),
+                    });
                 } else {
                     set({
                         items: get().items.map((i) =>
-                            i.product.id === productId ? { ...i, quantity } : i
+                            i.product.id === productId && i.sizeId === sizeId
+                                ? { ...i, quantity }
+                                : i
                         ),
                     });
                 }
@@ -56,11 +77,10 @@ const useCart = create(
 
             clearCart: () => set({ items: [] }),
 
-            totalItems: () =>
-                get().items.reduce((sum, i) => sum + i.quantity, 0),
+            totalItems: () => get().items.reduce((sum, i) => sum + i.quantity, 0),
         }),
         {
-            name: "cart-storage-v2",
+            name: "cart-storage-v3",
             storage: createJSONStorage(() => localStorage),
         }
     )

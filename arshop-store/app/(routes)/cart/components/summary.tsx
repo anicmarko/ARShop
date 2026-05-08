@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import { Loader2, Truck } from "lucide-react";
 import { toast } from "react-hot-toast";
+import { useUser } from "@clerk/nextjs";
 
 import Button from "@/components/ui/button";
 import Currency from "@/components/ui/currency";
@@ -12,8 +14,10 @@ import useCart from "@/hooks/useCart";
 const FREE_SHIPPING_THRESHOLD = 5000; // RSD
 
 const Summary = () => {
+    const router = useRouter();
     const items = useCart((state) => state.items);
     const [loading, setLoading] = useState(false);
+    const { user, isSignedIn } = useUser();
 
     const totalQty = items.reduce((sum, i) => sum + i.quantity, 0);
     const subtotal = items.reduce((sum, i) => sum + Number(i.product.price) * i.quantity, 0);
@@ -22,18 +26,27 @@ const Summary = () => {
     const freeShipping = subtotal >= FREE_SHIPPING_THRESHOLD;
 
     const onCheckout = async () => {
+        if (!isSignedIn) {
+            router.push("/sign-in");
+            return;
+        }
         try {
             setLoading(true);
-            // Repeat each productId by its quantity
-            const productIds = items.flatMap(({ product, quantity }) =>
-                Array<string>(quantity).fill(product.id)
-            );
+            const cartItems = items.map(({ product, sizeId, quantity }) => ({
+                productId: product.id,
+                sizeId,
+                quantity,
+            }));
             const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/checkout`, {
-                productIds,
+                cartItems,
+                userId: user?.id,
+                email: user?.primaryEmailAddress?.emailAddress,
+                name: user?.fullName ?? user?.firstName,
             });
             window.location.href = res.data.url;
-        } catch {
-            toast.error("Could not start checkout. Please try again.");
+        } catch (err: any) {
+            const msg = err?.response?.data?.error || "Could not start checkout. Please try again.";
+            toast.error(msg);
         } finally {
             setLoading(false);
         }
