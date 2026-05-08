@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, MouseEventHandler } from "react";
 import Image from "next/image";
 import { Expand, Heart, ShoppingCart } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
 
 import { Product } from "@/types";
 import Currency from "@/components/ui/currency";
@@ -18,6 +19,7 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ data }) => {
     const router = useRouter();
+    const { isSignedIn } = useUser();
     const previewModal = usePreviewModal();
     const cart = useCart();
     const wishlist = useWishlist();
@@ -38,11 +40,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ data }) => {
 
     const onAddToCart: MouseEventHandler<HTMLButtonElement> = (e) => {
         e.stopPropagation();
-        cart.addItem(data);
+        router.push(`/product/${data.id}`);
     };
 
     const onToggleWishlist: MouseEventHandler<HTMLButtonElement> = (e) => {
         e.stopPropagation();
+        if (!isSignedIn) {
+            router.push("/sign-in");
+            return;
+        }
         wishlist.toggle(data);
     };
 

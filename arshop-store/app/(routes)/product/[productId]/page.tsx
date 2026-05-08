@@ -16,7 +16,7 @@ const ProductPage: React.FC<ProductPageProps> = async ({ params }) => {
     const { productId } = await params;
 
     const product = await getProduct(productId);
-    const suggestedProducts = await getProducts({ categoryId: product?.category?.id });
+    const { data: suggestedProducts } = await getProducts({ categoryId: product?.category?.id });
 
     const related = suggestedProducts.filter((p) => p.id !== productId);
 

@@ -8,6 +8,7 @@ interface ProductListProps {
 }
 
 const ProductList: React.FC<ProductListProps> = ({ title, items }) => {
+    const safeItems = Array.isArray(items) ? items : [];
     return (
         <div>
             <div className="mb-10">
@@ -18,11 +19,11 @@ const ProductList: React.FC<ProductListProps> = ({ title, items }) => {
                     {title}
                 </h2>
             </div>
-            {items.length === 0 ? (
+            {safeItems.length === 0 ? (
                 <NoResults />
             ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-                    {items.map((item) => (
+                    {safeItems.map((item) => (
                         <ProductCard key={item.id} data={item} />
                     ))}
                 </div>

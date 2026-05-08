@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, SlidersHorizontal, X } from "lucide-react";
+import { ChevronDown, Search, SlidersHorizontal, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import qs from "query-string";
@@ -26,6 +26,7 @@ const FilterBar: React.FC<FilterBarProps> = ({ sizes, colors, productCount }) =>
     const router = useRouter();
     const searchParams = useSearchParams();
     const [open, setOpen] = useState<"sizes" | "colors" | "sort" | null>(null);
+    const [searchValue, setSearchValue] = useState(searchParams.get("name") ?? "");
     const ref = useRef<HTMLDivElement>(null);
 
     const selectedSize = searchParams.get("sizeId");
@@ -44,16 +45,28 @@ const FilterBar: React.FC<FilterBarProps> = ({ sizes, colors, productCount }) =>
 
     const setParam = (key: string, value: string | null) => {
         const current = qs.parse(searchParams.toString());
-        const query = { ...current, [key]: value };
+        const query = {
+            ...current,
+            [key]: value,
+            ...(key !== "page" ? { page: null } : {}),
+        };
         router.push(
             qs.stringifyUrl({ url: window.location.pathname, query }, { skipNull: true })
         );
         setOpen(null);
     };
 
-    const clearAll = () => router.push(window.location.pathname);
+    const clearAll = () => {
+        setSearchValue("");
+        router.push(window.location.pathname);
+    };
 
-    const hasFilters = !!(selectedSize || selectedColor || selectedSort !== "newest");
+    const submitSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        setParam("name", searchValue.trim() || null);
+    };
+
+    const hasFilters = !!(selectedSize || selectedColor || selectedSort !== "newest" || searchParams.get("name"));
 
     const triggerClass = (active: boolean) =>
         cn(
@@ -75,9 +88,31 @@ const FilterBar: React.FC<FilterBarProps> = ({ sizes, colors, productCount }) =>
         );
 
     return (
+        <div className="py-4 border-b border-gray-200 dark:border-zinc-800 mb-8 space-y-3">
+            {/* Search */}
+            <form onSubmit={submitSearch} className="flex items-center gap-2 max-w-sm">
+                <div className="relative flex-1">
+                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-zinc-500" aria-hidden="true" />
+                    <input
+                        type="text"
+                        value={searchValue}
+                        onChange={(e) => setSearchValue(e.target.value)}
+                        placeholder="Pretraži proizvode..."
+                        className="w-full pl-8 pr-3 py-2 rounded-full border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 text-sm text-gray-900 dark:text-zinc-100 placeholder:text-gray-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                    />
+                </div>
+                <button
+                    type="submit"
+                    className="px-4 py-2 rounded-full bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-medium hover:opacity-80 transition-opacity"
+                >
+                    Traži
+                </button>
+            </form>
+
+            {/* Filters row */}
         <div
             ref={ref}
-            className="flex items-center gap-2 flex-wrap py-4 border-b border-gray-200 dark:border-zinc-800 mb-8"
+            className="flex items-center gap-2 flex-wrap"
         >
             <div className="flex items-center gap-1.5 text-sm font-medium text-gray-500 dark:text-zinc-400 mr-1">
                 <SlidersHorizontal size={14} aria-hidden="true" />
@@ -229,6 +264,7 @@ const FilterBar: React.FC<FilterBarProps> = ({ sizes, colors, productCount }) =>
                     {productCount} {productCount === 1 ? "product" : "products"}
                 </p>
             )}
+        </div>
         </div>
     );
 };

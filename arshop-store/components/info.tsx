@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Check, Heart, Share2, ShoppingCart } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
 
 import { Product } from "@/types";
 import Currency from "@/components/ui/currency";
@@ -15,30 +17,49 @@ interface InfoProps {
 }
 
 const Info: React.FC<InfoProps> = ({ data }) => {
+    const router = useRouter();
+    const { isSignedIn } = useUser();
     const cart = useCart();
     const wishlist = useWishlist();
     const [mounted, setMounted] = useState(false);
     const [copied, setCopied] = useState(false);
+    const [selectedSizeId, setSelectedSizeId] = useState<string | null>(null);
 
     useEffect(() => setMounted(true), []);
 
     const isWishlisted = mounted && wishlist.hasItem(data.id);
-    const isInCart = mounted && cart.items.some((item) => item.product.id === data.id);
+    const selectedSize = data.sizes.find((s) => s.sizeId === selectedSizeId);
+    const isInCart = mounted && cart.items.some(
+        (i) => i.product.id === data.id && i.sizeId === selectedSizeId
+    );
 
     const handleShare = async () => {
         try {
             await navigator.clipboard.writeText(window.location.href);
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
-        } catch {
-            // clipboard not available in older browsers
-        }
+        } catch {}
     };
+
+    const handleAddToCart = () => {
+        if (!selectedSizeId || !selectedSize) return;
+        cart.addItem(data, selectedSizeId, selectedSize.size.name);
+    };
+
+    const addToCartDisabled = !selectedSizeId || isInCart || (selectedSize?.stock === 0);
+
+    const addToCartLabel = !selectedSizeId
+        ? "Select a size"
+        : isInCart
+        ? "Added to cart"
+        : selectedSize?.stock === 0
+        ? "Out of stock"
+        : "Add to cart";
 
     return (
         <>
             <div>
-                {/* Title row with share + wishlist */}
+                {/* Title row */}
                 <div className="flex items-start justify-between gap-3">
                     <h1 className="text-3xl font-bold text-gray-900 dark:text-zinc-100">
                         {data?.name}
@@ -56,12 +77,11 @@ const Info: React.FC<InfoProps> = ({ data }) => {
                                 }
                             </button>
                             <button
-                                onClick={() => wishlist.toggle(data)}
-                                aria-label={
-                                    isWishlisted
-                                        ? `Remove ${data.name} from wishlist`
-                                        : `Save ${data.name} to wishlist`
-                                }
+                                onClick={() => {
+                                    if (!isSignedIn) { router.push("/sign-in"); return; }
+                                    wishlist.toggle(data);
+                                }}
+                                aria-label={isWishlisted ? `Remove ${data.name} from wishlist` : `Save ${data.name} to wishlist`}
                                 className={cn(
                                     "p-2.5 rounded-full border transition-colors",
                                     isWishlisted
@@ -82,14 +102,7 @@ const Info: React.FC<InfoProps> = ({ data }) => {
                 <hr className="my-6 border-gray-200 dark:border-zinc-800" />
 
                 <div className="flex flex-col gap-y-5">
-                    <div className="flex items-center gap-x-3">
-                        <span className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-zinc-400 w-12">
-                            Size
-                        </span>
-                        <span className="text-gray-900 dark:text-zinc-100 font-medium">
-                            {data?.size?.name}
-                        </span>
-                    </div>
+                    {/* Color */}
                     <div className="flex items-center gap-x-3">
                         <span className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-zinc-400 w-12">
                             Color
@@ -105,17 +118,53 @@ const Info: React.FC<InfoProps> = ({ data }) => {
                             </span>
                         </div>
                     </div>
+
+                    {/* Size selector */}
+                    <div>
+                        <span className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-zinc-400">
+                            Size {selectedSize && <span className="text-gray-900 dark:text-zinc-100 normal-case font-medium">— {selectedSize.size.name}</span>}
+                        </span>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                            {data.sizes.map((ps) => {
+                                const outOfStock = ps.stock === 0;
+                                const isSelected = ps.sizeId === selectedSizeId;
+                                return (
+                                    <button
+                                        key={ps.sizeId}
+                                        onClick={() => !outOfStock && setSelectedSizeId(ps.sizeId)}
+                                        disabled={outOfStock}
+                                        title={outOfStock ? "Out of stock" : `${ps.stock} in stock`}
+                                        className={cn(
+                                            "min-w-[3rem] px-3 py-1.5 rounded-md border text-sm font-medium transition-colors",
+                                            isSelected
+                                                ? "border-gray-900 dark:border-zinc-100 bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900"
+                                                : outOfStock
+                                                ? "border-gray-200 dark:border-zinc-700 text-gray-300 dark:text-zinc-600 cursor-not-allowed line-through"
+                                                : "border-gray-300 dark:border-zinc-600 text-gray-700 dark:text-zinc-300 hover:border-gray-900 dark:hover:border-zinc-100"
+                                        )}
+                                    >
+                                        {ps.size.name}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                        {selectedSize && (
+                            <p className="mt-1.5 text-xs text-gray-400 dark:text-zinc-500">
+                                {selectedSize.stock} kom na stanju
+                            </p>
+                        )}
+                    </div>
                 </div>
 
                 {/* Desktop add to cart */}
                 <div className="mt-8 hidden lg:block">
                     <Button
                         className="flex items-center gap-x-2"
-                        onClick={() => cart.addItem(data)}
-                        disabled={isInCart}
-                        aria-label={isInCart ? "Already in cart" : `Add ${data.name} to cart`}
+                        onClick={handleAddToCart}
+                        disabled={addToCartDisabled}
+                        aria-label={addToCartLabel}
                     >
-                        {isInCart ? "Added to cart" : "Add to cart"}
+                        {addToCartLabel}
                         <ShoppingCart size={16} aria-hidden="true" />
                     </Button>
                 </div>
@@ -131,12 +180,12 @@ const Info: React.FC<InfoProps> = ({ data }) => {
                         <Currency value={data?.price} />
                     </div>
                     <Button
-                        onClick={() => cart.addItem(data)}
-                        disabled={isInCart}
+                        onClick={handleAddToCart}
+                        disabled={addToCartDisabled}
                         className="shrink-0"
-                        aria-label={isInCart ? "Already in cart" : `Add ${data.name} to cart`}
+                        aria-label={addToCartLabel}
                     >
-                        {isInCart ? "In cart" : "Add to cart"}
+                        {addToCartLabel}
                     </Button>
                 </div>
             </div>
