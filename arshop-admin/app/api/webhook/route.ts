@@ -18,21 +18,26 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: err.message }, { status: 400 });
     }
 
-    const session = event.data.object as Stripe.Checkout.Session;
-    const address = session.customer_details?.address;
-
-    const addressString = [
-        address?.line1,
-        address?.line2,
-        address?.city,
-        address?.state,
-        address?.postal_code,
-        address?.country,
-    ].filter(Boolean).join(", ");
-
     if (event.type === "checkout.session.completed") {
+        const session = event.data.object as Stripe.Checkout.Session;
+
+        const orderId = session.metadata?.orderId;
+        if (!orderId) {
+            return NextResponse.json({ error: "Missing orderId in metadata" }, { status: 400 });
+        }
+
+        const address = session.customer_details?.address;
+        const addressString = [
+            address?.line1,
+            address?.line2,
+            address?.city,
+            address?.state,
+            address?.postal_code,
+            address?.country,
+        ].filter(Boolean).join(", ");
+
         const order = await prismadb.order.update({
-            where: { id: session.metadata?.orderId },
+            where: { id: orderId },
             data: {
                 isPaid: true,
                 address: addressString,
@@ -49,7 +54,7 @@ export async function POST(req: Request) {
             });
         }
 
-        // Fix negative stock to 0
+        // Clamp negative stock to 0
         await prismadb.productSize.updateMany({
             where: {
                 productId: { in: order.orderItems.map((i) => i.productId) },

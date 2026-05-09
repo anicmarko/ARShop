@@ -39,7 +39,7 @@ const OrdersPage = async ({
             where,
             include: {
                 user: true,
-                orderItems: { include: { product: true } },
+                orderItems: { include: { product: true, size: true } },
             },
             orderBy: { [sortField]: direction },
             take: PAGE_SIZE,
@@ -53,7 +53,7 @@ const OrdersPage = async ({
         customer: item.user ? (item.user.name || item.user.email) : 'Guest',
         phone: item.phone,
         address: item.address,
-        products: item.orderItems.map((oi) => `${oi.product.name} x${oi.quantity}`).join(', '),
+        products: item.orderItems.map((oi) => `${oi.product.name} / ${oi.size.value} × ${oi.quantity}`).join(', '),
         totalPrice: formatter.format(
             item.orderItems.reduce((sum, oi) => sum + Number(oi.product.price) * oi.quantity, 0)
         ),
