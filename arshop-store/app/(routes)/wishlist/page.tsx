@@ -107,7 +107,7 @@ const WishlistPage = () => {
                                             <button
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    cart.addItem(item);
+                                                    router.push(`/product/${item.id}`);
                                                 }}
                                                 aria-label={`Add ${item.name} to cart`}
                                                 className="w-full flex items-center justify-center gap-2 bg-white/95 dark:bg-zinc-100 text-gray-900 dark:text-zinc-900 py-3 text-xs font-semibold backdrop-blur-sm"
