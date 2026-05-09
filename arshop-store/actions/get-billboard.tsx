@@ -6,7 +6,7 @@ const getBillboard = async (id: string): Promise<Billboard | null> => {
     try {
         const res = await fetch(`${URL}/${id}`, {
             cache: "no-store",
-            signal: AbortSignal.timeout(8000),
+            signal: AbortSignal.timeout(15000),
         });
         if (!res.ok) return null;
         return await res.json();
@@ -19,7 +19,7 @@ export const getFirstBillboard = async (): Promise<Billboard | null> => {
     try {
         const res = await fetch(URL, {
             cache: "no-store",
-            signal: AbortSignal.timeout(8000),
+            signal: AbortSignal.timeout(15000),
         });
         if (!res.ok) return null;
         const data = await res.json();

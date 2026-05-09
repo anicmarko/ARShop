@@ -6,7 +6,7 @@ const getCategories = async (): Promise<Category[]> => {
     try {
         const res = await fetch(URL, {
             cache: "no-store",
-            signal: AbortSignal.timeout(8000),
+            signal: AbortSignal.timeout(15000),
         });
         if (!res.ok) return [];
         const data = await res.json();

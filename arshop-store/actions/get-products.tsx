@@ -19,7 +19,7 @@ const getProducts = async (query: QueryParams): Promise<{ data: Product[]; total
     try {
         const res = await fetch(url, {
             cache: "no-store",
-            signal: AbortSignal.timeout(10000),
+            signal: AbortSignal.timeout(15000),
         });
         if (!res.ok) return { data: [], total: 0 };
         const json = await res.json();
