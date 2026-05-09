@@ -12,12 +12,12 @@ import { ColorColumn, columns } from "./columns";
 
 interface ColorClientProps {
     data: ColorColumn[];
+    total: number;
+    page: number;
+    pageSize: number;
 }
 
-export const ColorClient: React.FC<ColorClientProps> = ({
-    data
-}) => {
-
+export const ColorClient: React.FC<ColorClientProps> = ({ data, total, page, pageSize }) => {
     const router = useRouter();
     const params = useParams();
 
@@ -25,19 +25,27 @@ export const ColorClient: React.FC<ColorClientProps> = ({
         <>
             <div className="flex items-center justify-between">
                 <Heading
-                    title={`Colors (${data.length})`}
+                    title={`Colors (${total})`}
                     description="Manage your colors here"
                 />
                 <Button onClick={() => router.push(`/${params.storeId}/colors/new`)}>
-                    <Plus className="mr-2 h-4 w-4"/>
+                    <Plus className="mr-2 h-4 w-4" />
                     Add new
                 </Button>
             </div>
             <Separator />
-            <DataTable filterBy="name" columns={columns} data={data}/>
-            <Heading title="API" description="API calls for Colors"/>
+            <DataTable
+                filterBy="name"
+                columns={columns}
+                data={data}
+                total={total}
+                page={page}
+                pageSize={pageSize}
+                sortableColumns={["name", "createdAt"]}
+            />
+            <Heading title="API" description="API calls for Colors" />
             <Separator />
-            <ApiList entityName="colors" entityIdName="colorId"/>
+            <ApiList entityName="colors" entityIdName="colorId" />
         </>
-    )
-}
+    );
+};

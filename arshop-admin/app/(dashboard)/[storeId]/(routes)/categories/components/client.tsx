@@ -12,12 +12,12 @@ import { CategoryColumn, columns } from "./columns";
 
 interface CategoryClientProps {
     data: CategoryColumn[];
+    total: number;
+    page: number;
+    pageSize: number;
 }
 
-export const CategoryClient: React.FC<CategoryClientProps> = ({
-    data
-}) => {
-
+export const CategoryClient: React.FC<CategoryClientProps> = ({ data, total, page, pageSize }) => {
     const router = useRouter();
     const params = useParams();
 
@@ -25,19 +25,27 @@ export const CategoryClient: React.FC<CategoryClientProps> = ({
         <>
             <div className="flex items-center justify-between">
                 <Heading
-                    title={`Categories (${data.length})`}
+                    title={`Categories (${total})`}
                     description="Manage your categories here"
                 />
                 <Button onClick={() => router.push(`/${params.storeId}/categories/new`)}>
-                    <Plus className="mr-2 h-4 w-4"/>
+                    <Plus className="mr-2 h-4 w-4" />
                     Add new
                 </Button>
             </div>
             <Separator />
-            <DataTable filterBy="name" columns={columns} data={data}/>
-            <Heading title="API" description="API calls for Categories"/>
+            <DataTable
+                filterBy="name"
+                columns={columns}
+                data={data}
+                total={total}
+                page={page}
+                pageSize={pageSize}
+                sortableColumns={["name", "createdAt"]}
+            />
+            <Heading title="API" description="API calls for Categories" />
             <Separator />
-            <ApiList entityName="categories" entityIdName="categoryId"/>
+            <ApiList entityName="categories" entityIdName="categoryId" />
         </>
-    )
-}
+    );
+};

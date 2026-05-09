@@ -12,12 +12,12 @@ import { ProductColumn, columns } from "./columns";
 
 interface ProductClientProps {
     data: ProductColumn[];
+    total: number;
+    page: number;
+    pageSize: number;
 }
 
-export const ProductClient: React.FC<ProductClientProps> = ({
-    data
-}) => {
-
+export const ProductClient: React.FC<ProductClientProps> = ({ data, total, page, pageSize }) => {
     const router = useRouter();
     const params = useParams();
 
@@ -25,19 +25,27 @@ export const ProductClient: React.FC<ProductClientProps> = ({
         <>
             <div className="flex items-center justify-between">
                 <Heading
-                    title={`Products (${data.length})`}
+                    title={`Products (${total})`}
                     description="Manage your products here"
                 />
                 <Button onClick={() => router.push(`/${params.storeId}/products/new`)}>
-                    <Plus className="mr-2 h-4 w-4"/>
+                    <Plus className="mr-2 h-4 w-4" />
                     Add new
                 </Button>
             </div>
             <Separator />
-            <DataTable filterBy="name" columns={columns} data={data}/>
-            <Heading title="API" description="API calls for Products"/>
+            <DataTable
+                filterBy="name"
+                columns={columns}
+                data={data}
+                total={total}
+                page={page}
+                pageSize={pageSize}
+                sortableColumns={["name", "price", "stock", "createdAt", "isFeatured", "isArchived"]}
+            />
+            <Heading title="API" description="API calls for Products" />
             <Separator />
-            <ApiList entityName="products" entityIdName="productId"/>
+            <ApiList entityName="products" entityIdName="productId" />
         </>
-    )
-}
+    );
+};
