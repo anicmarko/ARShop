@@ -1,12 +1,11 @@
 "use client";
 
-import Button from "@/components/ui/button";
 import IconButton from "@/components/ui/icon-button";
 import { Size, Color } from "@/types";
 import { Dialog, DialogPanel } from "@headlessui/react";
 import { SlidersHorizontal, X } from "lucide-react";
 import { useState } from "react";
-import Filter from "./filter";
+import FilterBar from "./filter";
 
 interface MobileFiltersProps {
     sizes: Size[];
@@ -18,13 +17,13 @@ const MobileFilters: React.FC<MobileFiltersProps> = ({ sizes, colors }) => {
 
     return (
         <>
-            <Button
-                className="flex items-center gap-x-2 lg:hidden mb-6"
+            <button
+                className="flex items-center gap-x-2 lg:hidden mb-6 px-4 py-2 rounded-full border border-gray-300 dark:border-zinc-700 text-sm font-medium text-gray-700 dark:text-zinc-300"
                 onClick={() => setOpen(true)}
             >
                 <SlidersHorizontal size={16} />
                 Filters
-            </Button>
+            </button>
             <Dialog
                 open={open}
                 as="div"
@@ -42,8 +41,7 @@ const MobileFilters: React.FC<MobileFiltersProps> = ({ sizes, colors }) => {
                             />
                         </div>
                         <div className="p-4">
-                            <Filter valueKey="sizeId" name="Sizes" data={sizes} />
-                            <Filter valueKey="colorId" name="Colors" data={colors} />
+                            <FilterBar sizes={sizes} colors={colors} />
                         </div>
                     </DialogPanel>
                 </div>

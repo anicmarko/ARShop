@@ -3,6 +3,7 @@
 import { Heart, ShoppingBag, Sun, Moon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { SignInButton, UserButton, useAuth } from "@clerk/nextjs";
 
 import useCart from "@/hooks/useCart";
 import useWishlist from "@/hooks/use-wishlist";
@@ -19,6 +20,7 @@ const NavbarActions = () => {
     const wishlist = useWishlist();
     const router = useRouter();
     const { theme, toggle } = useTheme();
+    const { isSignedIn } = useAuth();
 
     if (!mounted) {
         return <div className="ml-auto flex items-center gap-x-4 h-9" />;
@@ -55,6 +57,16 @@ const NavbarActions = () => {
                 <ShoppingBag size={16} />
                 <span aria-hidden="true">{cart.totalItems()}</span>
             </button>
+
+            {isSignedIn ? (
+                <UserButton />
+            ) : (
+                <SignInButton mode="modal">
+                    <button className="text-sm font-semibold text-gray-700 dark:text-zinc-300 hover:text-gray-900 dark:hover:text-zinc-100 transition-colors px-2">
+                        Prijavi se
+                    </button>
+                </SignInButton>
+            )}
         </div>
     );
 };

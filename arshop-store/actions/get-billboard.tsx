@@ -9,9 +9,13 @@ const getBillboard = async (id: string): Promise<Billboard> => {
 }
 
 export const getFirstBillboard = async (): Promise<Billboard | null> => {
-    const res = await fetch(URL);
-    const data: Billboard[] = await res.json();
-    return data?.[0] ?? null;
-}
+    try {
+        const res = await fetch(URL);
+        const data = await res.json();
+        return Array.isArray(data) ? (data[0] ?? null) : null;
+    } catch {
+        return null;
+    }
+};
 
 export default getBillboard;

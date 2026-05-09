@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Urbanist } from "next/font/google";
+import { ClerkProvider } from "@clerk/nextjs";
 
 import "./globals.css";
 import Footer from "@/components/footer";
@@ -24,6 +25,7 @@ export default function RootLayout({
     children,
 }: Readonly<{ children: React.ReactNode }>) {
     return (
+        <ClerkProvider>
         <html lang="en" suppressHydrationWarning>
             <body className={`${font.className} bg-white dark:bg-zinc-950 text-gray-900 dark:text-zinc-100 transition-colors duration-200`}>
                 <ThemeProvider>
@@ -42,5 +44,6 @@ export default function RootLayout({
                 </ThemeProvider>
             </body>
         </html>
+        </ClerkProvider>
     );
 }
