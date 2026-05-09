@@ -18,7 +18,7 @@ const getProducts = async (query: QueryParams): Promise<{ data: Product[]; total
     const url = qs.stringifyUrl({ url: URL, query: { ...query } });
     try {
         const res = await fetch(url, {
-            cache: "no-store",
+            next: { revalidate: 60 },
             signal: AbortSignal.timeout(15000),
         });
         if (!res.ok) return { data: [], total: 0 };

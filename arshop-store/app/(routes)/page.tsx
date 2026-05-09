@@ -7,7 +7,7 @@ import getProducts from "@/actions/get-products";
 import getCategories from "@/actions/get-categories";
 import ProductList from "@/components/product-list";
 
-export const revalidate = 0;
+export const revalidate = 60;
 
 const HomePage = async () => {
     const [billboard, { data: products }, categories] = await Promise.all([

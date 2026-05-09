@@ -4,7 +4,7 @@ const URL = `${process.env.NEXT_PUBLIC_API_URL}/colors`;
 
 const getColors = async (): Promise<Color[]> => {
     try {
-        const res = await fetch(URL, { cache: "no-store", signal: AbortSignal.timeout(15000) });
+        const res = await fetch(URL, { next: { revalidate: 60 }, signal: AbortSignal.timeout(15000) });
         if (!res.ok) return [];
         const data = await res.json();
         return Array.isArray(data) ? data : [];

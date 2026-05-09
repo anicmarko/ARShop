@@ -5,7 +5,7 @@ const URL = `${process.env.NEXT_PUBLIC_API_URL}/billboards`;
 const getBillboard = async (id: string): Promise<Billboard | null> => {
     try {
         const res = await fetch(`${URL}/${id}`, {
-            cache: "no-store",
+            next: { revalidate: 60 },
             signal: AbortSignal.timeout(15000),
         });
         if (!res.ok) return null;
@@ -18,7 +18,7 @@ const getBillboard = async (id: string): Promise<Billboard | null> => {
 export const getFirstBillboard = async (): Promise<Billboard | null> => {
     try {
         const res = await fetch(URL, {
-            cache: "no-store",
+            next: { revalidate: 60 },
             signal: AbortSignal.timeout(15000),
         });
         if (!res.ok) return null;
