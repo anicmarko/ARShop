@@ -27,11 +27,16 @@ const FilterBar: React.FC<FilterBarProps> = ({ sizes, colors, productCount }) =>
     const searchParams = useSearchParams();
     const [open, setOpen] = useState<"sizes" | "colors" | "sort" | null>(null);
     const [searchValue, setSearchValue] = useState(searchParams.get("name") ?? "");
+    const [colorCache, setColorCache] = useState<Record<string, { name: string; value: string }>>({});
     const ref = useRef<HTMLDivElement>(null);
 
     const selectedSize = searchParams.get("sizeId");
     const selectedColor = searchParams.get("colorId");
     const selectedSort = (searchParams.get("sortBy") as SortKey) ?? "newest";
+
+    const activeColor = selectedColor
+        ? (colors.find((c) => c.id === selectedColor) ?? (colorCache[selectedColor] ? { id: selectedColor, ...colorCache[selectedColor] } as Color : null))
+        : null;
 
     useEffect(() => {
         const handler = (e: MouseEvent) => {
@@ -200,14 +205,14 @@ const FilterBar: React.FC<FilterBarProps> = ({ sizes, colors, productCount }) =>
                         aria-expanded={open === "colors"}
                         aria-haspopup="listbox"
                     >
-                        {selectedColor && (
+                        {activeColor && (
                             <span
-                                className="h-3 w-3 rounded-full border border-white/30 shrink-0"
-                                style={{ backgroundColor: colors.find((c) => c.id === selectedColor)?.value }}
+                                className="h-3 w-3 rounded-full border border-gray-400/50 dark:border-zinc-500/50 shrink-0"
+                                style={{ backgroundColor: activeColor.value }}
                                 aria-hidden="true"
                             />
                         )}
-                        {selectedColor ? (colors.find((c) => c.id === selectedColor)?.name ?? "Color") : "Color"}
+                        {activeColor ? activeColor.name : "Color"}
                         {selectedColor ? (
                             <X
                                 size={12}
@@ -228,7 +233,11 @@ const FilterBar: React.FC<FilterBarProps> = ({ sizes, colors, productCount }) =>
                                     key={color.id}
                                     role="option"
                                     aria-selected={selectedColor === color.id}
-                                    onClick={() => setParam("colorId", selectedColor === color.id ? null : color.id)}
+                                    onClick={() => {
+                                        const isDeselect = selectedColor === color.id;
+                                        if (!isDeselect) setColorCache(prev => ({ ...prev, [color.id]: { name: color.name, value: color.value } }));
+                                        setParam("colorId", isDeselect ? null : color.id);
+                                    }}
                                     className={cn(
                                         "w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors",
                                         selectedColor === color.id

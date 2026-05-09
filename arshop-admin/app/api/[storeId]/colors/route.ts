@@ -77,11 +77,7 @@ export async function GET(
                 storeId,
                 ...(categoryId ? {
                     products: {
-                        some: {
-                            categoryId,
-                            isArchived: false,
-                            sizes: { some: { stock: { gt: 0 } } },
-                        },
+                        some: { categoryId, isArchived: false },
                     },
                 } : {}),
             },
