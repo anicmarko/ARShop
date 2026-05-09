@@ -39,8 +39,8 @@ const CategoryPage: React.FC<CategoryPageProps> = async ({ params, searchParams 
 
     const [{ data: products, total }, sizes, colors, category] = await Promise.all([
         getProducts({ categoryId, colorId, sizeId, name, sortBy, take: PAGE_SIZE, skip }),
-        getSizes(),
-        getColors(),
+        getSizes(categoryId),
+        getColors(categoryId),
         getCategory(categoryId),
     ]);
 

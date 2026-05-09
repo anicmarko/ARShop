@@ -63,6 +63,8 @@ export async function GET(
 
 ) {
     try {
+        const { searchParams } = new URL(req.url);
+        const categoryId = searchParams.get("categoryId") || undefined;
 
         const { storeId }= await params;
 
@@ -72,10 +74,19 @@ export async function GET(
 
         const colors  = await prismadb.color.findMany({
             where: {
-                storeId
-            }
+                storeId,
+                ...(categoryId ? {
+                    products: {
+                        some: {
+                            categoryId,
+                            isArchived: false,
+                            sizes: { some: { stock: { gt: 0 } } },
+                        },
+                    },
+                } : {}),
+            },
         });
-    
+
         return NextResponse.json(colors);
 
     } catch (error) {

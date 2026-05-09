@@ -83,7 +83,7 @@ export async function GET(
             isFeatured: isFeatured ? true : undefined,
             isArchived: false,
             ...(name ? { name: { contains: name } } : {}),
-            ...(sizeId ? { sizes: { some: { sizeId } } } : {}),
+            ...(sizeId ? { sizes: { some: { sizeId, stock: { gt: 0 } } } } : {}),
         };
 
         const [data, total] = await Promise.all([

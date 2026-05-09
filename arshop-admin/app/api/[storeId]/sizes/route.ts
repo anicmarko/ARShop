@@ -63,6 +63,8 @@ export async function GET(
 
 ) {
     try {
+        const { searchParams } = new URL(req.url);
+        const categoryId = searchParams.get("categoryId") || undefined;
 
         const { storeId }= await params;
 
@@ -72,10 +74,18 @@ export async function GET(
 
         const sizes  = await prismadb.size.findMany({
             where: {
-                storeId
-            }
+                storeId,
+                ...(categoryId ? {
+                    productSizes: {
+                        some: {
+                            stock: { gt: 0 },
+                            product: { categoryId, isArchived: false },
+                        },
+                    },
+                } : {}),
+            },
         });
-    
+
         return NextResponse.json(sizes);
 
     } catch (error) {
