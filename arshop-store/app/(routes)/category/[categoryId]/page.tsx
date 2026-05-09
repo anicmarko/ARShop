@@ -47,6 +47,8 @@ const CategoryPage: React.FC<CategoryPageProps> = async ({ params, searchParams 
     const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
     const safePage = Math.min(currentPage, totalPages);
 
+    if (!category) return <div className="flex-1 p-8 text-center text-muted-foreground">Category not found.</div>;
+
     const buildPageUrl = (p: number) => {
         const q = new URLSearchParams({
             ...(colorId ? { colorId } : {}),

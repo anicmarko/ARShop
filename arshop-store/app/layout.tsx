@@ -16,6 +16,8 @@ import MobileBottomNav from "@/components/mobile-bottom-nav";
 
 const font = Urbanist({ subsets: ["latin"] });
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
     title: "ARShop",
     description: "Premium fashion store",

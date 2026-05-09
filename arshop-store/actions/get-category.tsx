@@ -2,10 +2,17 @@ import { Category } from "@/types";
 
 const URL = `${process.env.NEXT_PUBLIC_API_URL}/categories`;
 
-const getCategory = async (id: string): Promise<Category> => {
-    const res = await fetch(`${URL}/${id}`);
-    const data = await res.json();
-    return data;
-}
+const getCategory = async (id: string): Promise<Category | null> => {
+    try {
+        const res = await fetch(`${URL}/${id}`, {
+            cache: "no-store",
+            signal: AbortSignal.timeout(8000),
+        });
+        if (!res.ok) return null;
+        return await res.json();
+    } catch {
+        return null;
+    }
+};
 
-export default getCategory; 
+export default getCategory;

@@ -17,7 +17,11 @@ interface QueryParams {
 const getProducts = async (query: QueryParams): Promise<{ data: Product[]; total: number }> => {
     const url = qs.stringifyUrl({ url: URL, query: { ...query } });
     try {
-        const res = await fetch(url);
+        const res = await fetch(url, {
+            cache: "no-store",
+            signal: AbortSignal.timeout(10000),
+        });
+        if (!res.ok) return { data: [], total: 0 };
         const json = await res.json();
         if (Array.isArray(json)) return { data: json, total: json.length };
         return { data: Array.isArray(json.data) ? json.data : [], total: json.total ?? 0 };
