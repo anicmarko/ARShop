@@ -8,7 +8,7 @@ import FilterBar from "./components/filter";
 import NoResults from "@/components/ui/no-results";
 import ProductCard from "@/components/ui/product-card";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 const PAGE_SIZE = 12;
 

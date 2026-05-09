@@ -18,14 +18,18 @@ const getProducts = async (query: QueryParams): Promise<{ data: Product[]; total
     const url = qs.stringifyUrl({ url: URL, query: { ...query } });
     try {
         const res = await fetch(url, {
-            next: { revalidate: 60 },
+            cache: "no-store",
             signal: AbortSignal.timeout(15000),
         });
-        if (!res.ok) return { data: [], total: 0 };
+        if (!res.ok) {
+            console.error("[getProducts] API error", res.status, url);
+            return { data: [], total: 0 };
+        }
         const json = await res.json();
         if (Array.isArray(json)) return { data: json, total: json.length };
         return { data: Array.isArray(json.data) ? json.data : [], total: json.total ?? 0 };
-    } catch {
+    } catch (err) {
+        console.error("[getProducts] fetch failed", url, err);
         return { data: [], total: 0 };
     }
 };
